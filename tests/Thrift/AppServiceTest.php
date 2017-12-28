@@ -52,7 +52,7 @@ class AppServiceTest extends BaseTest
         for ($i = 0; $i < 10000; $i++) {
             $client->version();
         }
-        $this->assertTrue(time() - $time < 9);
+        $this->assertTrue(time() - $time < 5);
         $this->end();
     }
 
