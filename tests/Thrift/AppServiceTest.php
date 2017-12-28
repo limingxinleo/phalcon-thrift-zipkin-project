@@ -50,7 +50,7 @@ class AppServiceTest extends BaseTest
         $client = AppClient::getInstance();
         $time = time();
         for ($i = 0; $i < 10000; $i++) {
-            // $client->version();
+            $client->version();
         }
         $this->assertTrue(time() - $time < 9);
         $this->end();

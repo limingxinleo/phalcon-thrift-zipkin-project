@@ -8,6 +8,7 @@
 // +----------------------------------------------------------------------
 namespace App\Core\Services;
 
+use App\Common\Zipkin\AsyncHttpReporter;
 use Phalcon\Config;
 use Phalcon\DI\FactoryDefault;
 use Zipkin\Endpoint;
@@ -15,7 +16,6 @@ use GuzzleHttp\Client;
 use Zipkin\Annotation;
 use Zipkin\Samplers\BinarySampler;
 use Zipkin\TracingBuilder;
-use Zipkin\Reporters\HttpLogging;
 use App\Core\Logger;
 
 class Tracer implements ServiceProviderInterface
@@ -28,7 +28,7 @@ class Tracer implements ServiceProviderInterface
             // Logger to stdout
             $logger = new Logger();
 
-            $reporter = new HttpLogging($client, $logger);
+            $reporter = new AsyncHttpReporter($client, $logger);
             $sampler = BinarySampler::createAsAlwaysSample();
             $tracing = TracingBuilder::create()
                 ->havingLocalEndpoint($endpoint)
