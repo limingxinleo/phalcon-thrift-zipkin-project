@@ -30,6 +30,14 @@ return new Config(
 
         /*
         |--------------------------------------------------------------------------
+        | Application Name
+        |--------------------------------------------------------------------------
+        |
+        */
+        'name' => env('APP_NAME', 'phalcon'),
+
+        /*
+        |--------------------------------------------------------------------------
         | Environment
         |--------------------------------------------------------------------------
         |
@@ -276,6 +284,7 @@ return new Config(
                 'session' => App\Core\Services\Session::class,
                 'modelsManager' => App\Core\Services\ModelsManager::class,
                 'logger' => App\Core\Services\Logger::class,
+                'tracer' => App\Core\Services\Tracer::class,
             ],
             'cli' => [
                 'dispatcher' => App\Core\Services\Cli\Dispatcher::class,

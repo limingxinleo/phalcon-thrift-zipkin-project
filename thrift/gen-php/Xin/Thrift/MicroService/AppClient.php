@@ -27,15 +27,16 @@ class AppClient implements \Xin\Thrift\MicroService\AppIf {
     $this->output_ = $output ? $output : $input;
   }
 
-  public function version()
+  public function version(\Xin\Thrift\ZipkinService\Options $options)
   {
-    $this->send_version();
+    $this->send_version($options);
     return $this->recv_version();
   }
 
-  public function send_version()
+  public function send_version(\Xin\Thrift\ZipkinService\Options $options)
   {
     $args = new \Xin\Thrift\MicroService\App_version_args();
+    $args->options = $options;
     $bin_accel = ($this->output_ instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_write_binary');
     if ($bin_accel)
     {
@@ -80,15 +81,16 @@ class AppClient implements \Xin\Thrift\MicroService\AppIf {
     throw new \Exception("version failed: unknown result");
   }
 
-  public function testException()
+  public function testException(\Xin\Thrift\ZipkinService\Options $options)
   {
-    $this->send_testException();
+    $this->send_testException($options);
     return $this->recv_testException();
   }
 
-  public function send_testException()
+  public function send_testException(\Xin\Thrift\ZipkinService\Options $options)
   {
     $args = new \Xin\Thrift\MicroService\App_testException_args();
+    $args->options = $options;
     $bin_accel = ($this->output_ instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_write_binary');
     if ($bin_accel)
     {

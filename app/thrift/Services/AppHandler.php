@@ -10,6 +10,7 @@ namespace App\Thrift\Services;
 
 use Xin\Thrift\MicroService\AppIf;
 use Xin\Thrift\MicroService\ThriftException;
+use Xin\Thrift\ZipkinService\Options;
 
 class AppHandler extends Handler implements AppIf
 {
@@ -19,17 +20,18 @@ class AppHandler extends Handler implements AppIf
      * @return mixed
      * @throws ThriftException
      */
-    public function version()
+    public function version(Options $options)
     {
         return $this->config->version;
     }
+
 
     /**
      * @desc   测试异常抛出
      * @author limx
      * @throws ThriftException
      */
-    public function testException()
+    public function testException(Options $options)
     {
         throw new ThriftException([
             'code' => '400',

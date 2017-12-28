@@ -6,6 +6,9 @@ use Thrift\Protocol\TBinaryProtocol;
 use Thrift\Protocol\TMultiplexedProtocol;
 use Thrift\Transport\TBufferedTransport;
 use Thrift\Transport\TSocket;
+use Xin\Thrift\ZipkinService\Options;
+use Zipkin\Propagation\TraceContext;
+use Zipkin\Tracing;
 
 abstract class Client implements ClientInterface
 {
@@ -110,7 +113,60 @@ abstract class Client implements ClientInterface
 
     public function __call($name, $arguments)
     {
-        return $this->client->$name(...$arguments);
+        $options = end($arguments);
+        /** @var Tracing $tracing */
+        $tracing = di('tracer');
+        $tracer = $tracing->getTracer();
+
+        if (!$options instanceof Options) {
+            // 首次调用
+            $d = debug_backtrace()[1];
+            $spanName = $d['class'] . '@' . $d['function'];
+
+            $trace1 = $tracer->newTrace();
+            $trace1->setName($spanName);
+            $trace1->start();
+            $context = $trace1->getContext();
+            $options = new Options();
+            $options->traceId = $context->getTraceId();
+            $options->parentSpanId = $context->getParentId();
+            $options->spanId = $context->getSpanId();
+            $options->sampled = $context->isSampled();
+            $arguments[] = $options;
+        }
+
+        $spanName = get_called_class() . '@' . $name;
+        $context = TraceContext::create(
+            $options->traceId,
+            $options->spanId,
+            $options->parentSpanId,
+            $options->sampled
+        );
+        $trace2 = $tracer->newChild($context);
+        $trace2->setName($spanName);
+        $trace2->start();
+        $context = $trace2->getContext();
+        $options = array_pop($arguments);
+        $options->traceId = $context->getTraceId();
+        $options->parentSpanId = $context->getParentId();
+        $options->spanId = $context->getSpanId();
+        $options->sampled = $context->isSampled();
+        $arguments[] = $options;
+
+        try {
+            $result = $this->client->$name(...$arguments);
+        } finally {
+            if (isset($trace2)) {
+                $trace2->finish();
+            }
+            if (isset($trace1)) {
+                $trace1->finish();
+            }
+            $tracer->flush();
+        }
+
+        return $result;
     }
+
 }
 

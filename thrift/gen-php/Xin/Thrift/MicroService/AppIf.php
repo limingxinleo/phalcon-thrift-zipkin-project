@@ -18,15 +18,17 @@ use Thrift\Exception\TApplicationException;
 
 interface AppIf {
   /**
+   * @param \Xin\Thrift\ZipkinService\Options $options
    * @return string
    * @throws \Xin\Thrift\MicroService\ThriftException
    */
-  public function version();
+  public function version(\Xin\Thrift\ZipkinService\Options $options);
   /**
+   * @param \Xin\Thrift\ZipkinService\Options $options
    * @return string
    * @throws \Xin\Thrift\MicroService\ThriftException
    */
-  public function testException();
+  public function testException(\Xin\Thrift\ZipkinService\Options $options);
 }
 
 

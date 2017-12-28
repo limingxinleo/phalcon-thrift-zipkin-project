@@ -57,7 +57,7 @@ class AppProcessor {
     }
     $result = new \Xin\Thrift\MicroService\App_version_result();
     try {
-      $result->success = $this->handler_->version();
+      $result->success = $this->handler_->version($args->options);
     } catch (\Xin\Thrift\MicroService\ThriftException $ex) {
       $result->ex = $ex;
     }
@@ -88,7 +88,7 @@ class AppProcessor {
     }
     $result = new \Xin\Thrift\MicroService\App_testException_result();
     try {
-      $result->success = $this->handler_->testException();
+      $result->success = $this->handler_->testException($args->options);
     } catch (\Xin\Thrift\MicroService\ThriftException $ex) {
       $result->ex = $ex;
     }
