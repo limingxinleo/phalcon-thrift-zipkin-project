@@ -1,5 +1,5 @@
 namespace php Xin.Thrift.ZipkinService
-namespace go vendor.service
+namespace go vendor.zipkin
 
 struct Options {
     1: string traceId,
