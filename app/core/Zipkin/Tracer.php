@@ -17,6 +17,13 @@ class Tracer
 {
     use InstanceTrait;
 
+    /**
+     * @desc
+     * @author limx
+     * @param ZipkinTracer $tracer
+     * @param              $spanName
+     * @return array
+     */
     public function newTrace(ZipkinTracer $tracer, $spanName)
     {
         $trace = $tracer->newTrace();

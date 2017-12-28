@@ -138,6 +138,7 @@ return new Config(
         |
         */
         'application' => [
+            'commonDir' => APP_PATH . '/common/',
             'configDir' => APP_PATH . '/config/',
             'controllersDir' => APP_PATH . '/controllers/',
             'coreDir' => APP_PATH . '/core/',

@@ -15,5 +15,6 @@ $router->add('/:controller/:action/:params', [
 
 $router->add('/:controller', [
     'namespace' => 'App\Controllers',
-    'controller' => 1
+    'controller' => 1,
+    'action' => 'index',
 ]);

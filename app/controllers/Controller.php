@@ -8,11 +8,18 @@
 // +----------------------------------------------------------------------
 namespace App\Controllers;
 
+use App\Common\Zipkin\ZipkinClient;
+use App\Core\Zipkin\Tracer;
+use Zipkin\Span;
 use Zipkin\Tracing;
 
 abstract class Controller extends \Phalcon\Mvc\Controller
 {
+    /** @var  \Zipkin\Tracer */
     public $tracer;
+
+    /** @var  Span */
+    public $newTracer;
 
     public function initialize()
     {
@@ -23,10 +30,16 @@ abstract class Controller extends \Phalcon\Mvc\Controller
         /** @var Tracing $tracing */
         $tracing = di('tracer');
         $tracer = $tracing->getTracer();
+        $this->tracer = $tracer;
+        $uri = $this->router->getRewriteUri();
+        list($new_tracer, $options) = Tracer::getInstance()->newTrace($tracer, $uri);
+        $this->newTracer = $new_tracer;
+        ZipkinClient::getInstance()->setOptions($options);
     }
 
     public function afterExecuteRoute()
     {
-        // 在每一个找到的动作后执行
+        $this->newTracer->finish();
+        $this->tracer->flush();
     }
 }

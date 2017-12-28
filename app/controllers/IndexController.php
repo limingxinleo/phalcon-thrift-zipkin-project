@@ -8,7 +8,8 @@
 // +----------------------------------------------------------------------
 namespace App\Controllers;
 
-use App\Core\System;
+use App\Common\Zipkin\ZipkinClient;
+use App\Thrift\Clients\AppClient;
 
 class IndexController extends Controller
 {
@@ -20,14 +21,17 @@ class IndexController extends Controller
      */
     public function indexAction()
     {
+        $version = AppClient::getInstance()->version(ZipkinClient::getInstance()->options);
+        $message = AppClient::getInstance()->welcome(ZipkinClient::getInstance()->options);
         if ($this->request->isPost()) {
             return $this->response->setJsonContent([
-                'version' => System::getInstance()->version(),
-                'message' => "You're now flying with Phalcon. Great things are about to happen!",
+                'version' => $version,
+                'message' => $message,
+                'welcome' => "You're now flying with Phalcon. Great things are about to happen!",
             ]);
         }
-        $this->view->version = System::getInstance()->version();
+        $this->view->version = $version;
         return $this->view->render('index', 'index');
     }
-    
+
 }
