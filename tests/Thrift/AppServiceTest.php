@@ -23,6 +23,13 @@ class AppServiceTest extends UnitTestCase
         $this->assertEquals($version, $client->version());
     }
 
+    public function testWelcomeCase()
+    {
+        $version = di('config')->version;
+        $client = AppClient::getInstance();
+        $this->assertEquals("You're using limingxinleo\phalcon-project {$version}", $client->welcome());
+    }
+
     public function testExceptionCase()
     {
         try {

@@ -8,8 +8,11 @@
 // +----------------------------------------------------------------------
 namespace App\Controllers;
 
+use Zipkin\Tracing;
+
 abstract class Controller extends \Phalcon\Mvc\Controller
 {
+    public $tracer;
 
     public function initialize()
     {
@@ -17,7 +20,9 @@ abstract class Controller extends \Phalcon\Mvc\Controller
 
     public function beforeExecuteRoute()
     {
-        // 在每一个找到的动作前执行
+        /** @var Tracing $tracing */
+        $tracing = di('tracer');
+        $tracer = $tracing->getTracer();
     }
 
     public function afterExecuteRoute()

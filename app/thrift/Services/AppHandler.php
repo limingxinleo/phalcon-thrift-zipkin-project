@@ -8,6 +8,7 @@
 // +----------------------------------------------------------------------
 namespace App\Thrift\Services;
 
+use App\Thrift\Clients\AppClient;
 use Xin\Thrift\MicroService\AppIf;
 use Xin\Thrift\MicroService\ThriftException;
 use Xin\Thrift\ZipkinService\Options;
@@ -25,6 +26,16 @@ class AppHandler extends Handler implements AppIf
         return $this->config->version;
     }
 
+    /**
+     * @desc   欢迎语
+     * @author limx
+     * @param Options $options
+     */
+    public function welcome(Options $options)
+    {
+        $version = AppClient::getInstance()->version($options);
+        return "You're using limingxinleo\phalcon-project {$version}";
+    }
 
     /**
      * @desc   测试异常抛出

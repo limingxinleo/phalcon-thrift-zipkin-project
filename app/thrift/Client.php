@@ -2,6 +2,7 @@
 
 namespace App\Thrift;
 
+use App\Core\Zipkin\Tracer;
 use Thrift\Protocol\TBinaryProtocol;
 use Thrift\Protocol\TMultiplexedProtocol;
 use Thrift\Transport\TBufferedTransport;
@@ -123,44 +124,23 @@ abstract class Client implements ClientInterface
             $d = debug_backtrace()[1];
             $spanName = $d['class'] . '@' . $d['function'];
 
-            $trace1 = $tracer->newTrace();
-            $trace1->setName($spanName);
-            $trace1->start();
-            $context = $trace1->getContext();
-            $options = new Options();
-            $options->traceId = $context->getTraceId();
-            $options->parentSpanId = $context->getParentId();
-            $options->spanId = $context->getSpanId();
-            $options->sampled = $context->isSampled();
+            list($new_trace, $options) = Tracer::getInstance()->newTrace($tracer, $spanName);
             $arguments[] = $options;
         }
 
         $spanName = get_called_class() . '@' . $name;
-        $context = TraceContext::create(
-            $options->traceId,
-            $options->spanId,
-            $options->parentSpanId,
-            $options->sampled
-        );
-        $trace2 = $tracer->newChild($context);
-        $trace2->setName($spanName);
-        $trace2->start();
-        $context = $trace2->getContext();
-        $options = array_pop($arguments);
-        $options->traceId = $context->getTraceId();
-        $options->parentSpanId = $context->getParentId();
-        $options->spanId = $context->getSpanId();
-        $options->sampled = $context->isSampled();
+        list($child_trace, $options) = Tracer::getInstance()->newChild($tracer, $spanName, $options);
+        array_pop($arguments);
         $arguments[] = $options;
 
         try {
             $result = $this->client->$name(...$arguments);
         } finally {
-            if (isset($trace2)) {
-                $trace2->finish();
+            if (isset($child_trace)) {
+                $child_trace->finish();
             }
-            if (isset($trace1)) {
-                $trace1->finish();
+            if (isset($new_trace)) {
+                $new_trace->finish();
             }
             $tracer->flush();
         }

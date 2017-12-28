@@ -29,6 +29,12 @@ interface AppIf {
    * @throws \Xin\Thrift\MicroService\ThriftException
    */
   public function testException(\Xin\Thrift\ZipkinService\Options $options);
+  /**
+   * @param \Xin\Thrift\ZipkinService\Options $options
+   * @return string
+   * @throws \Xin\Thrift\MicroService\ThriftException
+   */
+  public function welcome(\Xin\Thrift\ZipkinService\Options $options);
 }
 
 
