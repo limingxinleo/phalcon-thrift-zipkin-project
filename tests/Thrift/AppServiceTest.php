@@ -30,6 +30,16 @@ class AppServiceTest extends UnitTestCase
         $this->assertEquals("You're using limingxinleo\phalcon-project {$version}", $client->welcome());
     }
 
+    public function testManyRequestCase()
+    {
+        $client = AppClient::getInstance();
+        $time = time();
+        for ($i = 0; $i < 10000; $i++) {
+            $client->version();
+        }
+        $this->assertTrue(time() - $time < 9);
+    }
+
     public function testExceptionCase()
     {
         try {
