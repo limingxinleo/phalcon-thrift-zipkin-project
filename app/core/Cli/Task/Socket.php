@@ -37,6 +37,8 @@ abstract class Socket extends Task
         $this->params = $params;
 
         set_time_limit(0);
+        define('IS_MEMORY_RESIDENT', true);
+
         $server = new swoole_server("0.0.0.0", $this->port);
 
         $config = $this->getConfig();

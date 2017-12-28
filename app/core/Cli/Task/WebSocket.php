@@ -36,6 +36,8 @@ abstract class WebSocket extends Task
             return;
         }
         set_time_limit(0);
+        define('IS_MEMORY_RESIDENT', true);
+
         $server = new swoole_websocket_server("0.0.0.0", $this->port);
 
         $server->set($this->config);

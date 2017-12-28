@@ -42,6 +42,8 @@ abstract class Queue extends Task
         // install signal handler for dead kids
         pcntl_signal(SIGCHLD, [$this, "signalHandler"]);
         set_time_limit(0);
+        define('IS_MEMORY_RESIDENT', true);
+
         // 实例化Redis实例
         $redis = $this->redisClient();
         while (true) {

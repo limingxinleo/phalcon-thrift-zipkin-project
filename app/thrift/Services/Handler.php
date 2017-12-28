@@ -8,9 +8,42 @@
 // +----------------------------------------------------------------------
 namespace App\Thrift\Services;
 
+use App\Core\Zipkin\Tracer;
+use App\Thrift\Services\Impl\ImplHandler;
 use Phalcon\Di\Injectable;
+use Xin\Thrift\ZipkinService\ThriftException;
+use Zipkin\Tracing;
 
 abstract class Handler extends Injectable
 {
+    /** @var  ImplHandler */
+    protected $impl;
 
+    public function __call($name, $arguments)
+    {
+        if (empty($this->impl)) {
+            throw new ThriftException([
+                'code' => 0,
+                'message' => '微服务Handler没有设置其实现'
+            ]);
+        }
+
+        /** @var Tracing $tracing */
+        $tracing = di('tracer');
+        $tracer = $tracing->getTracer();
+
+        $spanName = $this->impl . '@' . $name;
+        $options = array_pop($arguments);
+        list($child_trace, $options) = Tracer::getInstance()->newChild($tracer, $spanName, $options);
+        $arguments[] = $options;
+
+        try {
+            $result = $this->impl::getInstance()->$name(...$arguments);
+        } finally {
+            $child_trace->finish();
+            $tracer->flush();
+        }
+
+        return $result;
+    }
 }

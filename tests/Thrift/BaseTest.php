@@ -8,21 +8,38 @@
 // +----------------------------------------------------------------------
 namespace Tests\Thrift;
 
+use App\Common\Zipkin\ZipkinClient;
+use App\Core\Zipkin\Tracer;
 use Tests\UnitTestCase;
 
 /**
  * Class UnitTest
  */
-class BaseTest extends UnitTestCase
+abstract class BaseTest extends UnitTestCase
 {
-    public function testBaseCase()
-    {
-        $this->assertTrue(
-            extension_loaded('phalcon')
-        );
+    /** @var  \Zipkin\Tracer */
+    public $tracer;
 
-        $this->assertTrue(
-            extension_loaded('swoole')
-        );
+    /** @var  Span */
+    public $newTracer;
+
+    public function begin($name)
+    {
+        $name = get_called_class() . '@' . $name;
+        /** @var Tracing $tracing */
+        $tracing = di('tracer');
+        $tracer = $tracing->getTracer();
+        $this->tracer = $tracer;
+        list($new_tracer, $options) = Tracer::getInstance()->newTrace($tracer, $name);
+        $this->newTracer = $new_tracer;
+        ZipkinClient::getInstance()->setOptions($options);
     }
+
+    protected function end()
+    {
+        ZipkinClient::getInstance()->flushInstance();
+        $this->newTracer->finish();
+        $this->tracer->flush();
+    }
+
 }

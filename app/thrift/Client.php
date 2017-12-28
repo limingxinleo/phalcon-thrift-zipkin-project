@@ -2,6 +2,7 @@
 
 namespace App\Thrift;
 
+use App\Common\Zipkin\ZipkinClient;
 use App\Core\Zipkin\Tracer;
 use Thrift\Protocol\TBinaryProtocol;
 use Thrift\Protocol\TMultiplexedProtocol;
@@ -115,37 +116,11 @@ abstract class Client implements ClientInterface
     public function __call($name, $arguments)
     {
         $options = end($arguments);
-        /** @var Tracing $tracing */
-        $tracing = di('tracer');
-        $tracer = $tracing->getTracer();
-
         if (!$options instanceof Options) {
-            // 首次调用
-            $d = debug_backtrace()[1];
-            $spanName = $d['class'] . '@' . $d['function'];
-
-            list($new_trace, $options) = Tracer::getInstance()->newTrace($tracer, $spanName);
+            $options = ZipkinClient::getInstance()->getOptions();
             $arguments[] = $options;
         }
-
-        $spanName = get_called_class() . '@' . $name;
-        list($child_trace, $options) = Tracer::getInstance()->newChild($tracer, $spanName, $options);
-        array_pop($arguments);
-        $arguments[] = $options;
-
-        try {
-            $result = $this->client->$name(...$arguments);
-        } finally {
-            if (isset($child_trace)) {
-                $child_trace->finish();
-            }
-            if (isset($new_trace)) {
-                $new_trace->finish();
-            }
-            $tracer->flush();
-        }
-
-        return $result;
+        return $this->client->$name(...$arguments);
     }
 
 }

@@ -6,18 +6,15 @@
 // +----------------------------------------------------------------------
 // | Author: limx <715557344@qq.com> <https://github.com/limingxinleo>
 // +----------------------------------------------------------------------
-namespace App\Thrift\Services;
+namespace App\Thrift\Services\Impl;
 
-use App\Thrift\Services\Impl\AppHandlerImpl;
+use App\Thrift\Clients\AppClient;
 use Xin\Thrift\MicroService\AppIf;
-use Xin\Thrift\MicroService\ThriftException;
 use Xin\Thrift\ZipkinService\Options;
+use Xin\Thrift\ZipkinService\ThriftException;
 
-class AppHandler extends Handler implements AppIf
+class AppHandlerImpl extends ImplHandler implements AppIf
 {
-
-    protected $impl = AppHandlerImpl::class;
-
     /**
      * @desc   返回项目版本号
      * @author limx
@@ -26,7 +23,7 @@ class AppHandler extends Handler implements AppIf
      */
     public function version(Options $options)
     {
-        return parent::version($options);
+        return $this->config->version;
     }
 
     /**
@@ -36,7 +33,8 @@ class AppHandler extends Handler implements AppIf
      */
     public function welcome(Options $options)
     {
-        return parent::welcome($options);
+        $version = AppClient::getInstance()->version($options);
+        return "You're using limingxinleo\phalcon-project {$version}";
     }
 
     /**
@@ -46,6 +44,9 @@ class AppHandler extends Handler implements AppIf
      */
     public function testException(Options $options)
     {
-        return parent::testException($options);
+        throw new ThriftException([
+            'code' => '400',
+            'message' => '异常测试'
+        ]);
     }
 }

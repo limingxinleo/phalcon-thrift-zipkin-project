@@ -2,7 +2,11 @@
 
 namespace App\Tasks;
 
+use App\Common\Zipkin\ZipkinClient;
+use App\Core\Zipkin\Tracer;
 use Phalcon\Cli\Dispatcher;
+use Zipkin\Span;
+use Zipkin\Tracing;
 
 /**
  * Class Task
@@ -12,6 +16,12 @@ use Phalcon\Cli\Dispatcher;
 abstract class Task extends \Phalcon\Cli\Task
 {
     public $description;
+
+    /** @var  \Zipkin\Tracer */
+    public $tracer;
+
+    /** @var  Span */
+    public $newTracer;
 
     public function onConstruct()
     {
@@ -29,12 +39,22 @@ abstract class Task extends \Phalcon\Cli\Task
 
     public function beforeExecuteRoute()
     {
-        // 在每一个找到的动作前执行
+        /** @var Tracing $tracing */
+        $tracing = di('tracer');
+        $tracer = $tracing->getTracer();
+        $this->tracer = $tracer;
+        $task = $this->dispatcher->getTaskName();
+        $action = $this->dispatcher->getActionName();
+        $name = $task . '@' . $action;
+        list($new_tracer, $options) = Tracer::getInstance()->newTrace($tracer, $name);
+        $this->newTracer = $new_tracer;
+        ZipkinClient::getInstance()->setOptions($options);
     }
 
     public function afterExecuteRoute()
     {
-        // 在每一个找到的动作后执行
+        $this->newTracer->finish();
+        $this->tracer->flush();
     }
 }
 

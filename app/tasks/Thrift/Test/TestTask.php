@@ -2,11 +2,13 @@
 
 namespace App\Tasks\Thrift\Test;
 
+use App\Common\Zipkin\ZipkinClient;
+use App\Tasks\Task;
 use App\Thrift\Clients\AppClient;
 use Xin\Cli\Color;
 use swoole_process;
 
-class TestTask extends \Phalcon\Cli\Task
+class TestTask extends Task
 {
     public function mainAction()
     {
@@ -27,7 +29,7 @@ class TestTask extends \Phalcon\Cli\Task
     {
         $client = AppClient::getInstance();
         try {
-            dump($client->testException());
+            dump($client->testException(ZipkinClient::getInstance()->getOptions()));
         } catch (\Exception $ex) {
             dump($ex->getCode());
             dump($ex->getMessage());
@@ -55,7 +57,7 @@ class TestTask extends \Phalcon\Cli\Task
     {
         $client = AppClient::getInstance();
         for ($i = 0; $i < 10000; $i++) {
-            $client->version();
+            $client->version(ZipkinClient::getInstance()->getOptions());
             // echo $client->version() . PHP_EOL;
         }
     }
@@ -68,7 +70,7 @@ class TestTask extends \Phalcon\Cli\Task
     {
         $client = AppClient::getInstance();
 
-        dump($client->version());
+        dump($client->version(ZipkinClient::getInstance()->getOptions()));
     }
 
     /**
@@ -80,11 +82,11 @@ class TestTask extends \Phalcon\Cli\Task
         $client = AppClient::getInstance();
         $client = AppClient::getInstance();
 
-        echo Color::colorize($client->version(), Color::FG_GREEN) . PHP_EOL;
+        echo Color::colorize($client->version(ZipkinClient::getInstance()->getOptions()), Color::FG_GREEN) . PHP_EOL;
 
         $client = AppClient::getInstance();
 
-        echo Color::colorize($client->version(), Color::FG_GREEN) . PHP_EOL;
+        echo Color::colorize($client->version(ZipkinClient::getInstance()->getOptions()), Color::FG_GREEN) . PHP_EOL;
         echo Color::colorize("实例个数：" . count(AppClient::$_instance), Color::FG_GREEN) . PHP_EOL;
     }
 

@@ -23,7 +23,7 @@ class ZipkinClient
 
     public function __construct()
     {
-        if (IS_CLI) {
+        if (defined('IS_MEMORY_RESIDENT') && IS_MEMORY_RESIDENT === true) {
             throw new Exception('CLI模式下，不允许使用单例对象作为调用链存储方式');
         }
     }
@@ -39,6 +39,11 @@ class ZipkinClient
 
         $this->context = $context;
         $this->options = $options;
+    }
+
+    public function getOptions()
+    {
+        return $this->options;
     }
 
     public function getContext()

@@ -58,7 +58,7 @@ class AppProcessor {
     $result = new \Xin\Thrift\MicroService\App_version_result();
     try {
       $result->success = $this->handler_->version($args->options);
-    } catch (\Xin\Thrift\MicroService\ThriftException $ex) {
+    } catch (\Xin\Thrift\ZipkinService\ThriftException $ex) {
       $result->ex = $ex;
     }
     $bin_accel = ($output instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_write_binary');
@@ -89,7 +89,7 @@ class AppProcessor {
     $result = new \Xin\Thrift\MicroService\App_testException_result();
     try {
       $result->success = $this->handler_->testException($args->options);
-    } catch (\Xin\Thrift\MicroService\ThriftException $ex) {
+    } catch (\Xin\Thrift\ZipkinService\ThriftException $ex) {
       $result->ex = $ex;
     }
     $bin_accel = ($output instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_write_binary');
@@ -120,7 +120,7 @@ class AppProcessor {
     $result = new \Xin\Thrift\MicroService\App_welcome_result();
     try {
       $result->success = $this->handler_->welcome($args->options);
-    } catch (\Xin\Thrift\MicroService\ThriftException $ex) {
+    } catch (\Xin\Thrift\ZipkinService\ThriftException $ex) {
       $result->ex = $ex;
     }
     $bin_accel = ($output instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_write_binary');
