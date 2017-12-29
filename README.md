@@ -10,6 +10,30 @@
 
 [wiki](https://github.com/limingxinleo/simple-subcontrollers.phalcon/wiki)
 
+## Zipkin使用
+1. 安装
+~~~
+docker run --name zipkin -d -p 9411:9411 openzipkin/zipkin 
+~~~
+
+2. thrift文件
+必须要引入zipkin.thrift，且把zipkin.Options设为最后一个参数
+~~~
+namespace php Xin.Thrift.MicroService
+namespace go vendor.service
+
+include 'zipkin.thrift'
+
+service App {
+    // 返回项目版本号
+    string version(1: string name, 2: zipkin.Options options) throws (1:zipkin.ThriftException ex)
+}
+~~~
+
+3. 注意
+- 常驻内存模式下，不能使用单例对象，存储全局变量
+
+
 ## 安装
 1. 安装项目
 ~~~
