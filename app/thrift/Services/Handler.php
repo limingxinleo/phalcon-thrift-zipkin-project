@@ -28,9 +28,8 @@ abstract class Handler extends Injectable
             ]);
         }
 
-        /** @var Tracing $tracing */
-        $tracing = di('tracer');
-        $tracer = $tracing->getTracer();
+        /** @var Tracer $tracing */
+        $tracer = di('tracer');
 
         $spanName = $this->impl . '@' . $name;
         $options = array_pop($arguments);

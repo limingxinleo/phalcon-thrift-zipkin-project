@@ -35,6 +35,12 @@ interface AppIf {
    * @throws \Xin\Thrift\ZipkinService\ThriftException
    */
   public function welcome(\Xin\Thrift\ZipkinService\Options $options);
+  /**
+   * @param \Xin\Thrift\ZipkinService\Options $options
+   * @return string
+   * @throws \Xin\Thrift\ZipkinService\ThriftException
+   */
+  public function timeout(\Xin\Thrift\ZipkinService\Options $options);
 }
 
 

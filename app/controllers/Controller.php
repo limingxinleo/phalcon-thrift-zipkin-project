@@ -27,9 +27,8 @@ abstract class Controller extends \Phalcon\Mvc\Controller
 
     public function beforeExecuteRoute()
     {
-        /** @var Tracing $tracing */
-        $tracing = di('tracer');
-        $tracer = $tracing->getTracer();
+        /** @var Tracer $tracing */
+        $tracer = di('tracer');
         $this->tracer = $tracer;
         $uri = $this->router->getRewriteUri();
         list($new_tracer, $options) = Tracer::getInstance()->newTrace($tracer, $uri);

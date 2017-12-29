@@ -49,4 +49,16 @@ class AppHandlerImpl extends ImplHandler implements AppIf
             'message' => '异常测试'
         ]);
     }
+
+    /**
+     * @desc   延迟测试
+     * @author limx
+     * @param Options $options
+     * @return mixed
+     */
+    public function timeout(Options $options)
+    {
+        sleep(1);
+        return $this->config->version;
+    }
 }

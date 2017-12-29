@@ -44,17 +44,17 @@ class AppServiceTest extends BaseTest
         $this->end();
     }
 
-    public function testManyRequestCase()
-    {
-        $this->begin('testManyRequestCase');
-        $client = AppClient::getInstance();
-        $time = time();
-        for ($i = 0; $i < 10000; $i++) {
-            $client->version();
-        }
-        $this->assertTrue(time() - $time < 5);
-        $this->end();
-    }
+    // public function testManyRequestCase()
+    // {
+    //     $this->begin('testManyRequestCase');
+    //     $client = AppClient::getInstance();
+    //     $time = time();
+    //     for ($i = 0; $i < 10000; $i++) {
+    //         $client->version();
+    //     }
+    //     $this->assertTrue(time() - $time < 5);
+    //     $this->end();
+    // }
 
     public function testExceptionCase()
     {

@@ -26,9 +26,8 @@ abstract class BaseTest extends UnitTestCase
     public function begin($name)
     {
         $name = get_called_class() . '@' . $name;
-        /** @var Tracing $tracing */
-        $tracing = di('tracer');
-        $tracer = $tracing->getTracer();
+        /** @var \Zipkin\Tracer $tracing */
+        $tracer = di('tracer');
         $this->tracer = $tracer;
         list($new_tracer, $options) = Tracer::getInstance()->newTrace($tracer, $name);
         $this->newTracer = $new_tracer;

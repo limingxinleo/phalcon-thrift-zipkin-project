@@ -23,17 +23,50 @@ class TestTask extends Task
         echo Color::colorize('  exception                       测试异常抛出', Color::FG_GREEN) . PHP_EOL;
         echo Color::colorize('  client                          Client单例测试', Color::FG_GREEN) . PHP_EOL;
         echo Color::colorize('  high                            高并发测试', Color::FG_GREEN) . PHP_EOL;
+        echo Color::colorize('  async                           异步测试', Color::FG_GREEN) . PHP_EOL;
+        echo Color::colorize('  timeout                         延迟测试', Color::FG_GREEN) . PHP_EOL;
+    }
+
+    public function timeoutAction()
+    {
+        $client = AppClient::getInstance();
+        dump($client->timeout());
     }
 
     public function exceptionAction()
     {
         $client = AppClient::getInstance();
         try {
-            dump($client->testException(ZipkinClient::getInstance()->getOptions()));
+            dump($client->testException());
         } catch (\Exception $ex) {
             dump($ex->getCode());
             dump($ex->getMessage());
         }
+    }
+
+    public function asyncAction()
+    {
+        $process = new swoole_process([$this, 'timeoutHandle']);
+        $process->write('welcome');
+        $process->start();
+
+        $process = new swoole_process([$this, 'timeoutHandle']);
+        $process->write('version');
+        $process->start();
+
+        swoole_process::wait();
+    }
+
+    public function timeoutHandle(swoole_process $worker)
+    {
+        swoole_event_add($worker->pipe, function ($pipe) use ($worker) {
+            // 从主进程中读取到的数据
+            $recv = $worker->read();
+            $client = AppClient::getInstance();
+            dump($client->$recv());
+            $worker->exit(0);
+            swoole_event_del($pipe);
+        });
     }
 
     public function highAction($params = [])
@@ -57,7 +90,7 @@ class TestTask extends Task
     {
         $client = AppClient::getInstance();
         for ($i = 0; $i < 10000; $i++) {
-            $client->version(ZipkinClient::getInstance()->getOptions());
+            $client->version();
             // echo $client->version() . PHP_EOL;
         }
     }
@@ -70,7 +103,7 @@ class TestTask extends Task
     {
         $client = AppClient::getInstance();
 
-        dump($client->version(ZipkinClient::getInstance()->getOptions()));
+        dump($client->version());
     }
 
     /**
@@ -82,11 +115,11 @@ class TestTask extends Task
         $client = AppClient::getInstance();
         $client = AppClient::getInstance();
 
-        echo Color::colorize($client->version(ZipkinClient::getInstance()->getOptions()), Color::FG_GREEN) . PHP_EOL;
+        echo Color::colorize($client->version(), Color::FG_GREEN) . PHP_EOL;
 
         $client = AppClient::getInstance();
 
-        echo Color::colorize($client->version(ZipkinClient::getInstance()->getOptions()), Color::FG_GREEN) . PHP_EOL;
+        echo Color::colorize($client->version(), Color::FG_GREEN) . PHP_EOL;
         echo Color::colorize("实例个数：" . count(AppClient::$_instance), Color::FG_GREEN) . PHP_EOL;
     }
 

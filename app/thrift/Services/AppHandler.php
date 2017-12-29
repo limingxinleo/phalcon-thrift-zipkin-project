@@ -48,4 +48,15 @@ class AppHandler extends Handler implements AppIf
     {
         return parent::testException($options);
     }
+
+    /**
+     * @desc   延迟测试
+     * @author limx
+     * @param Options $options
+     * @return mixed
+     */
+    public function timeout(Options $options)
+    {
+        return parent::timeout($options);
+    }
 }

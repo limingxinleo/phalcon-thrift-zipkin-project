@@ -39,9 +39,8 @@ abstract class Task extends \Phalcon\Cli\Task
 
     public function beforeExecuteRoute()
     {
-        /** @var Tracing $tracing */
-        $tracing = di('tracer');
-        $tracer = $tracing->getTracer();
+        /** @var Tracer $tracing */
+        $tracer = di('tracer');
         $this->tracer = $tracer;
         $task = $this->dispatcher->getTaskName();
         $action = $this->dispatcher->getActionName();

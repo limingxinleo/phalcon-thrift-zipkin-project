@@ -15,7 +15,7 @@ class AppClient extends Client
 
     protected $clientName = AppServiceClient::class;
 
-    protected $recvTimeoutMilliseconds = 50;
+    protected $recvTimeoutMilliseconds = 2000;
 
     protected $sendTimeoutMilliseconds;
 

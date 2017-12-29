@@ -12,4 +12,7 @@ service App {
 
     // 欢迎语
     string welcome (1: zipkin.Options options) throws (1:zipkin.ThriftException ex)
+
+    // 返回项目版本号
+    string timeout(1: zipkin.Options options) throws (1:zipkin.ThriftException ex)
 }
