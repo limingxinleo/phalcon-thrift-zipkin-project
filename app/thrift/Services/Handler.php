@@ -8,6 +8,7 @@
 // +----------------------------------------------------------------------
 namespace App\Thrift\Services;
 
+use App\Common\Zipkin\ZipkinClient;
 use App\Core\Zipkin\Tracer;
 use App\Thrift\Services\Impl\ImplHandler;
 use Phalcon\Di\Injectable;
@@ -34,6 +35,7 @@ abstract class Handler extends Injectable
         $spanName = $this->impl . '@' . $name;
         $options = array_pop($arguments);
         list($child_trace, $options) = Tracer::getInstance()->newChild($tracer, $spanName, $options);
+        ZipkinClient::getInstance()->setOptions($options);
         $arguments[] = $options;
 
         try {

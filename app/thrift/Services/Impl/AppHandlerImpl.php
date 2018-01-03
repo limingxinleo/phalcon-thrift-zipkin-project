@@ -33,7 +33,7 @@ class AppHandlerImpl extends ImplHandler implements AppIf
      */
     public function welcome(Options $options)
     {
-        $version = AppClient::getInstance()->version($options);
+        $version = AppClient::getInstance()->version();
         return "You're using limingxinleo\phalcon-project {$version}";
     }
 
